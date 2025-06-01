@@ -1,0 +1,13 @@
+xgboost
+apache-airflow
+kafka-python
+catboost
+pandas
+scikit-learn
+lightgbm
+tqdm
+tqdm-joblib
+pyspark
+boto3
+python-env
+pyyaml
