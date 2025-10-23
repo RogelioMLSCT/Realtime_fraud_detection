@@ -6,7 +6,7 @@ from faker import Faker
 import random
 import json
 import signal
-from time import time
+import time
 from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, Any
 from jsonschema import ValidationError, validate, FormatChecker
@@ -23,19 +23,20 @@ load_dotenv(dotenv_path="app/.env")
 fake = Faker()
 
 TRANSACTION_SCHEMA = {
-    "type":"object",
+    "type": "object",
     "properties": {
         "transaction_id": {"type": "string"},
-        "user_id": {"type": "number", "minimun": 1000, "maximun":9999},
-        "amount": {"type": "number", "minimun": 0.01, "maximun":10000},
-        "currency": {"type": "string", "pattern":"^[A-Z]{3}$"},
+        "user_id": {"type": "number", "minimum": 1000, "maximum": 9999},
+        "amount": {"type": "number", "minimum": 0.01, "maximum": 10000},
+        "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
         "merchant": {"type": "string"},
         "timestamp": {"type": "string", "format": "date-time"},
-        "location": {"type": "string", "pattern":"^[A-Z]{2}$"},
-        "is_fraud": {"type": "interger", "minimun": 0, "maximun": 1 }
+        "location": {"type": "string", "pattern": "^[A-Z]{2}$"},
+        "is_fraud": {"type": "integer", "minimum": 0, "maximum": 1}
     },
-    "required":["transaction_id", "user_id", "amount", "currency", "timestamp", "is_fraud"]
+    "required": ["transaction_id", "user_id", "amount", "currency", "timestamp", "is_fraud"]
 }
+
 
 class TransactionProducer():
     def __init__(self):
@@ -82,8 +83,8 @@ class TransactionProducer():
         }
         
         # Configure graceful shutdown
-        signal.signal(signal.SIGINT, self.shutdown)
-        signal.signal(signal.SIGTERM, self.shutdown)
+        signal.signal(signal.SIGINT, self.shutdowm)
+        signal.signal(signal.SIGTERM, self.shutdowm)
         
         
     
@@ -100,13 +101,15 @@ class TransactionProducer():
                 schema=TRANSACTION_SCHEMA,
                 format_checker=FormatChecker() 
             )
+            return True
             
         except ValidationError as e:
             logger.error(f'Invalidad transaction: {e.message}')
+            return False
     
     def generate_transaction(self) -> Optional[Dict[str, Any]]:
         transaction = { 
-        'transacttin_id':fake.uuid4(),
+        'transaction_id':fake.uuid4(),
         'user_id': random.randint(1000, 9999),
         'amount':  round(fake.pyfloat(min_value=0.01, max_value=10000), 2),
         'currency': 'USD',
@@ -147,7 +150,8 @@ class TransactionProducer():
         if not is_fraud:
             if user_id % 500 == 0 and random.random() < 0.1:
                 is_fraud = 1
-                transaction['location'] = random.choice('CN', 'RU', 'GB')
+                transaction['location'] =  random.choice(['CN', 'RU', 'GB'])
+
                 
         # Baseline 
         if not is_fraud and random.random() < 0.02:
@@ -156,7 +160,7 @@ class TransactionProducer():
                  
               
         # ensure that final fraud rate is between 1-2%
-        transaction['is_fraud'] = is_fraud if random.random < 0.985 else 0
+        transaction['is_fraud'] = is_fraud if random.random() < 0.985 else 0
         
         # validate modified transation
         if self.validate_transaction(transaction):

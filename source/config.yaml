@@ -1,0 +1,23 @@
+mlfow:
+  experiment_name: 'fraud_detection_v1'
+  registered_model_name: 'fraud_detection_xgboost'
+  tracking_uri: "http://mlfow-server:5500"
+  artifact_location: "s3://mlfow/fraud_detection"
+  s3_endpoint_url: "http://minio:9000"
+  butckets: 'mlflow'
+  
+kafka:
+  boostrap_servers: "pkc-921jm.us-east-2.aws.confluent.cloud:9092"
+  username: "JDFK7IQWX67E343N"
+  password: "cfltIKCRz476wJ3PSKUxXBuADHWmh/IEkePpOGlY1aeX7GLsPcHMxH7TmXIXtGRA"
+  topic: "transactions"
+  output_topic: "fraud_predictions"
+
+
+##features:
+
+
+
+##model:
+
+##spark:

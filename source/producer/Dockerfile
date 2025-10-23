@@ -22,15 +22,15 @@ RUN apt-get update && \
 
 
 # Manually install librdkafka with SASL/SSL support
-RUN curl -fsSL https://github.com/confluentic/librdkafka/archive/refs/tag/v2.8.0.tat.gz -o librdkafka.tar.gz \
+RUN curl -fsSL https://github.com/confluentinc/librdkafka/archive/refs/tags/v2.8.0.tar.gz -o librdkafka.tar.gz && \
     tar -xzf librdkafka.tar.gz && \
     cd librdkafka-2.8.0 && \
-    ./configure -enable-ssl --enable-sasl && \
+    ./configure --enable-ssl --enable-sasl && \
     make && \
     make install && \
     ldconfig && \
     cd .. && \
-    rm -rf librdkafka-2.8.0 librdkafka.tar.gz 
+    rm -rf librdkafka-2.8.0 librdkafka.tar.gz
 
 # copy requirements and install python dependencies
 COPY ./requirements.txt /app/requirements.txt

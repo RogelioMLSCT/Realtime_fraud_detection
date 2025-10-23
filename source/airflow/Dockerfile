@@ -1,4 +1,4 @@
-FROM apache/airflow:2.10.5
+FROM apache/airflow:3.1.0
 
 # create models directory and set ownership
 USER root

@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
+from airflow.exceptions import AirflowException
 import logging
 from datetime import datetime, timedelta
 
@@ -8,17 +9,29 @@ from datetime import datetime, timedelta
 logger = logging.getLogger(__name__)
 
 default_args = {
-    'owner': 'datamasterylab.com',
+    'owner': 'Rogelio Franco',
     'depends_on_past': False,
-    'start_date': datetime(2025, 3, 3),
-    ##'execution_timeout': timedelta(minutes=120),
+    'start_date': datetime(2025, 10, 20),
+    'execution_timeout': timedelta(minutes=120),
     'max_active_runs': 1,    
 }
 
 def train_model(**context):
     """  Airflow wrapper for training task  """
-    # from fraud_detection_training import FraudDetectionTraining
-    pass
+    from fraud_detection_training import FraudDetectionTraining
+    
+    try:
+        logger.info('Initializing fraud detection training')
+        
+        trainer = FraudDetectionTraining()
+        
+        
+        return {'status': 'succes'}
+    
+    
+    except Exception as e:
+        logger.error(f'Training failed: {e} ')
+        raise AirflowException(f'Model training failed')
 
 with DAG( 'Fraud_detection_training',
     default_args=default_args,
@@ -33,7 +46,7 @@ with DAG( 'Fraud_detection_training',
         echo "Validating enviroment......"
         test -f /app/config.yaml &&
         test -f /app/.env &&
-        echo "Enviroment is valid!
+        echo "Enviroment is valid!"
         '''       
     )
     
@@ -59,6 +72,8 @@ with DAG( 'Fraud_detection_training',
     ## Fraud Detection Training Pipeline
     
     Daily training of fraud detection model using:
-        - Training model using XGBOOST
+        - Transaction Data from Kafka
+        - XGBOOST classifier with precision optimisation
+        - MLFLOW for experimentation
     
     """
