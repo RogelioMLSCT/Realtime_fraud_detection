@@ -6,4 +6,5 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     CREATE USER mlflow WITH PASSWORD 'mlflow';
     CREATE DATABASE mlflow;
     GRANT ALL PRIVILEGES ON DATABASE mlflow to mlflow;
+    GRANT ALL PRIVILEGES ON SCHEMA public TO mlflow;
 EOSQL
